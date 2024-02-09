@@ -1,13 +1,16 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { PokeController } from './poke-controller/poke-controller.controller';
-import { PokeService } from './poke-service/poke-service.service';
-import { HttpModule } from '@nestjs/axios';
+import { GraphQLModule } from '@nestjs/graphql';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { PokeModule } from './poke/poke.module';
 
 @Module({
-  imports: [HttpModule],
-  controllers: [AppController, PokeController],
-  providers: [AppService, PokeService],
+  imports: [
+    PokeModule,
+    GraphQLModule.forRoot<ApolloDriverConfig>({
+      driver: ApolloDriver,
+      typePaths: ['./**/*.graphql'],
+      installSubscriptionHandlers: true,
+    }),
+  ],
 })
 export class AppModule {}

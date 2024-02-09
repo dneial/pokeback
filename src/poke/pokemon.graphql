@@ -1,0 +1,25 @@
+type Query {
+  pokemons(offset: Int, limit: Int): [Pokemon]
+  pokemon(id: ID!): PokemonDetail
+}
+
+type Pokemon {
+  id: Int
+  name: String
+}
+
+type PokemonDetail {
+  id: Int
+  name: String
+  weight: Int
+  height: Int
+  abilities: [String]
+  base_experience: Int
+  forms: [String]
+  games: [String]
+  is_default: Boolean
+  moves: [String]
+  order: Int
+  types: [String]
+  species: String
+}
