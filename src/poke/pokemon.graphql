@@ -13,13 +13,22 @@ type PokemonDetail {
   name: String
   weight: Int
   height: Int
-  abilities: [String]
-  base_experience: Int
+  abilities: [Ability]
   forms: [String]
   games: [String]
-  is_default: Boolean
   moves: [String]
   order: Int
   types: [String]
   species: String
+}
+
+# comment forcer la conversion des objets imbriques?
+type Ability {
+  ability: AbilityDetail
+  slot: Int
+}
+
+type AbilityDetail {
+  name: String
+  url: String
 }

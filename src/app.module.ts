@@ -1,15 +1,29 @@
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import { PokeModule } from './poke/poke.module';
+import { PokemonModule } from './pokemon/pokemon.module';
+import { join } from 'path';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Pokemon } from './poke/entities/pokemon.entity';
 
 @Module({
   imports: [
-    PokeModule,
+    PokemonModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
-      typePaths: ['./**/*.graphql'],
       installSubscriptionHandlers: true,
+      autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+    }),
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      synchronize: true,
+      logging: true,
+      entities: [Pokemon],
+      host: 'localhost',
+      port: 5432,
+      password: 'azerty',
+      username: 'postgres',
+      database: 'pokemon',
     }),
   ],
 })

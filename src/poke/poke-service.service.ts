@@ -2,7 +2,7 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { AxiosResponse } from 'axios';
 import { Observable, catchError, map } from 'rxjs';
-import { Pokemon } from 'src/models/pokemon';
+import { Pokemon } from './entities/pokemon.entity';
 const URI = 'https://pokeapi.co/api/v2/pokemon/';
 
 @Injectable()
@@ -32,23 +32,8 @@ export class PokeService {
       );
   }
 
-  getById(id: number) {
+  getById(id: number): Observable<Pokemon> {
     const url = URI + id;
-    return this.httpService.get(url).pipe(
-      map((v) => v.data),
-      map((data) => ({
-        id: data.id,
-        name: data.name,
-        weight: data.weight,
-        height: data.height,
-        abilities: data.abilities.map((a) => a.ability.name),
-        base_experience: data.base_experience,
-        forms: data.forms.map((f) => f.name),
-        moves: data.moves.map((m) => m.move.name),
-        species: data.species.name,
-        types: data.types.map((t) => t.type.name),
-        order: data.order,
-      })),
-    );
+    return this.httpService.get(url).pipe(map((v) => v.data));
   }
 }
