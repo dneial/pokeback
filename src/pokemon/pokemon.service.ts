@@ -1,41 +1,89 @@
+import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { firstValueFrom } from 'rxjs';
+import { Repository } from 'typeorm';
 import { CreatePokemonInput } from './dto/create-pokemon.input';
 import { UpdatePokemonInput } from './dto/update-pokemon.input';
-import { HttpService } from '@nestjs/axios';
-import { Observable, map } from 'rxjs';
 import { Pokemon } from './entities/pokemon.entity';
 
-const URI = 'https://pokeapi.co/api/v2/pokemon/';
+const URI = 'https://pokebuildapi.fr/api/v1/pokemon/';
+
+const transform = (apiData) => {
+  return {
+    name: apiData.name,
+    id: apiData.id,
+    imageURL: apiData.image,
+    hp: apiData.stats.HP,
+    attack: apiData.stats.attack,
+    defense: apiData.stats.defense,
+    speed: apiData.stats.speed,
+  };
+};
 
 @Injectable()
 export class PokemonService {
-  constructor(private readonly httpService: HttpService) {}
+  constructor(
+    private readonly httpService: HttpService,
+    @InjectRepository(Pokemon)
+    private readonly pokemonRepository: Repository<Pokemon>,
+  ) {}
 
   create(createPokemonInput: CreatePokemonInput) {
-    return 'This action adds a new pokemon';
+    const name = createPokemonInput.name;
+    const hp = createPokemonInput.hp;
+    const attack = createPokemonInput.attack;
+    const defense = createPokemonInput.defense;
+    const speed = createPokemonInput.defense;
+    const imageURL = createPokemonInput.imageURL || null;
+
+    const poke = {
+      name,
+      imageURL,
+      hp,
+      attack,
+      defense,
+      speed,
+    };
+
+    return this.pokemonRepository.save(poke);
   }
 
-  findAll(offset: number, limit: number): Observable<Pokemon[]> {
-    const params = { offset: offset || 0, limit: limit || 2000 };
-    return this.httpService
-      .get(URI, { params })
-      .pipe(
-        map((r) =>
-          r.data.results.map((v, idx) => ({ id: idx + 1, name: v.name })),
-        ),
-      );
+  async findAll(offset: number, limit: number): Promise<Pokemon[]> {
+    let bdPokes;
+    if (!offset || offset === 0) {
+      bdPokes = await this.pokemonRepository.find();
+    }
+
+    let url = URI;
+    if (limit) {
+      url += `limit/${limit}`;
+    }
+    const resp = await firstValueFrom(this.httpService.get(url).pipe());
+
+    const apiPokes = resp.data.map((p) => transform(p));
+
+    return offset ? apiPokes : bdPokes + apiPokes;
   }
 
-  findOne(id: number) {
-    const url = URI + id;
-    return this.httpService.get(url).pipe(map((v) => v.data));
+  async findOne(name: string): Promise<Pokemon> {
+    const bdPokemon = await this.pokemonRepository.findOneBy({ name });
+    if (bdPokemon) return bdPokemon;
+
+    const url = URI + name;
+    try {
+      const apiPoke = await firstValueFrom(this.httpService.get(url).pipe());
+      return apiPoke.data.map((d) => transform(d));
+    } catch (err) {
+      return null;
+    }
   }
 
-  update(id: number, updatePokemonInput: UpdatePokemonInput) {
-    return `This action updates a #${id} pokemon`;
+  update(id: string, updatePokemonInput: UpdatePokemonInput) {
+    return this.pokemonRepository.update(id, { ...updatePokemonInput });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} pokemon`;
+  remove(id: string) {
+    return this.pokemonRepository.delete(id);
   }
 }

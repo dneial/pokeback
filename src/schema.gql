@@ -3,13 +3,41 @@
 # ------------------------------------------------------
 
 type Pokemon {
-  _id: String!
+  id: ID!
   name: String!
-  weight: Int!
-  height: Int!
+  imageURL: String!
+  hp: Float!
+  attack: Float!
+  defense: Float!
+  speed: Float!
 }
 
 type Query {
-  pokemons(offset: Float!, limit: Float!): Pokemon!
-  pokemon(id: Float!): Pokemon!
+  pokemons(offset: Int, limit: Int): [Pokemon!]!
+  pokemon(name: String!): Pokemon
+}
+
+type Mutation {
+  createPokemon(createPokemonInput: CreatePokemonInput!): Pokemon!
+  updatePokemon(updatePokemonInput: UpdatePokemonInput!): Pokemon!
+  removePokemon(id: String!): Pokemon!
+}
+
+input CreatePokemonInput {
+  name: String!
+  imageURL: String
+  hp: Int!
+  attack: Int!
+  defense: Int!
+  speed: Int!
+}
+
+input UpdatePokemonInput {
+  name: String!
+  imageURL: String
+  hp: Int!
+  attack: Int!
+  defense: Int!
+  speed: Int!
+  id: String!
 }

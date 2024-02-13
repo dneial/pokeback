@@ -8,7 +8,27 @@ export class Pokemon {
   @Field(() => ID)
   id: string;
 
-  @Column()
+  @Column({ unique: true })
   @Field()
   name: string;
+
+  @Column({ nullable: true })
+  @Field()
+  imageURL: string;
+
+  @Column()
+  @Field()
+  hp: number;
+
+  @Column()
+  @Field()
+  attack: number;
+
+  @Column()
+  @Field()
+  defense: number;
+
+  @Column()
+  @Field()
+  speed: number;
 }

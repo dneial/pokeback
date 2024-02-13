@@ -4,7 +4,7 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { PokemonModule } from './pokemon/pokemon.module';
 import { join } from 'path';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Pokemon } from './poke/entities/pokemon.entity';
+import { Pokemon } from './pokemon/entities/pokemon.entity';
 
 @Module({
   imports: [
@@ -15,6 +15,7 @@ import { Pokemon } from './poke/entities/pokemon.entity';
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
     }),
     TypeOrmModule.forRoot({
+      autoLoadEntities: true,
       type: 'postgres',
       synchronize: true,
       logging: true,
