@@ -10,6 +10,8 @@ type Pokemon {
   attack: Float!
   defense: Float!
   speed: Float!
+  evolutions: [String!]
+  preEvolution: String
 }
 
 type Query {
@@ -30,6 +32,8 @@ input CreatePokemonInput {
   attack: Int!
   defense: Int!
   speed: Int!
+  preEvolution: String
+  evolutions: [String!]
 }
 
 input UpdatePokemonInput {
@@ -39,5 +43,7 @@ input UpdatePokemonInput {
   attack: Int!
   defense: Int!
   speed: Int!
+  preEvolution: String
+  evolutions: [String!]
   id: String!
 }

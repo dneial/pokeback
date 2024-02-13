@@ -9,7 +9,7 @@ import { Pokemon } from './entities/pokemon.entity';
 
 const URI = 'https://pokebuildapi.fr/api/v1/pokemon/';
 
-const transform = (apiData) => {
+const transform = (apiData): Pokemon => {
   return {
     name: apiData.name,
     id: apiData.id,
@@ -18,6 +18,8 @@ const transform = (apiData) => {
     attack: apiData.stats.attack,
     defense: apiData.stats.defense,
     speed: apiData.stats.speed,
+    evolutions: apiData.apiEvolutions.map((p) => p.name),
+    preEvolution: apiData.apiPreEvolution.name,
   };
 };
 
@@ -30,40 +32,33 @@ export class PokemonService {
   ) {}
 
   create(createPokemonInput: CreatePokemonInput) {
-    const name = createPokemonInput.name;
-    const hp = createPokemonInput.hp;
-    const attack = createPokemonInput.attack;
-    const defense = createPokemonInput.defense;
-    const speed = createPokemonInput.defense;
-    const imageURL = createPokemonInput.imageURL || null;
-
-    const poke = {
-      name,
-      imageURL,
-      hp,
-      attack,
-      defense,
-      speed,
-    };
-
-    return this.pokemonRepository.save(poke);
+    return this.pokemonRepository.save({ ...createPokemonInput });
   }
 
   async findAll(offset: number, limit: number): Promise<Pokemon[]> {
-    let bdPokes;
-    if (!offset || offset === 0) {
-      bdPokes = await this.pokemonRepository.find();
-    }
+    const bdPokes: Pokemon[] = await this.pokemonRepository.find({
+      skip: offset,
+      take: limit,
+    });
 
     let url = URI;
-    if (limit) {
-      url += `limit/${limit}`;
+    offset |= 0;
+    const apiOffset = offset - bdPokes.length;
+    let apiLimit;
+
+    if (limit || limit === 0) {
+      if (bdPokes) {
+        limit -= bdPokes.length;
+        if (limit < 0) return bdPokes;
+      }
+      apiLimit = apiOffset + limit;
+      url += `limit/${apiLimit}`;
     }
     const resp = await firstValueFrom(this.httpService.get(url).pipe());
+    const apiPokes: Pokemon[] = resp.data.map((p) => transform(p));
+    const offsetPokes = apiPokes.slice(apiOffset);
 
-    const apiPokes = resp.data.map((p) => transform(p));
-
-    return offset ? apiPokes : bdPokes + apiPokes;
+    return bdPokes ? [...bdPokes, ...offsetPokes] : offsetPokes;
   }
 
   async findOne(name: string): Promise<Pokemon> {

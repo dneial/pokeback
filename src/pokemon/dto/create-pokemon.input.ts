@@ -1,4 +1,4 @@
-import { InputType, Int, Field } from '@nestjs/graphql';
+import { Field, InputType, Int } from '@nestjs/graphql';
 
 @InputType()
 export class CreatePokemonInput {
@@ -19,4 +19,10 @@ export class CreatePokemonInput {
 
   @Field(() => Int)
   speed: number;
+
+  @Field(() => String, { nullable: true })
+  preEvolution: string;
+
+  @Field(() => [String], { nullable: true })
+  evolutions: string[];
 }

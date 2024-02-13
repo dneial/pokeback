@@ -1,5 +1,5 @@
+import { Field, InputType, Int, PartialType } from '@nestjs/graphql';
 import { CreatePokemonInput } from './create-pokemon.input';
-import { InputType, Field, Int, PartialType } from '@nestjs/graphql';
 
 @InputType()
 export class UpdatePokemonInput extends PartialType(CreatePokemonInput) {
@@ -23,4 +23,10 @@ export class UpdatePokemonInput extends PartialType(CreatePokemonInput) {
 
   @Field(() => Int)
   speed?: number;
+
+  @Field(() => String, { nullable: true })
+  preEvolution: string;
+
+  @Field(() => [String], { nullable: true })
+  evolutions: string[];
 }

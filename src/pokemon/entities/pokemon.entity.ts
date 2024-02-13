@@ -31,4 +31,12 @@ export class Pokemon {
   @Column()
   @Field()
   speed: number;
+
+  @Column('simple-array')
+  @Field(() => [String], { nullable: true })
+  evolutions: string[];
+
+  @Column({ nullable: true })
+  @Field(() => String, { nullable: true })
+  preEvolution: string;
 }
