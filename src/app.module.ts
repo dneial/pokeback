@@ -1,10 +1,10 @@
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
-import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import { PokemonModule } from './pokemon/pokemon.module';
-import { join } from 'path';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { join } from 'path';
 import { Pokemon } from './pokemon/entities/pokemon.entity';
+import { PokemonModule } from './pokemon/pokemon.module';
 
 @Module({
   imports: [

@@ -41,15 +41,16 @@ export class PokemonService {
       take: limit,
     });
 
-    let url = URI;
     offset |= 0;
-    const apiOffset = offset - bdPokes.length;
+    const apiOffset = offset - bdPokes.length < 0 ? 0 : offset - bdPokes.length;
+
+    let url = URI;
     let apiLimit;
 
-    if (limit || limit === 0) {
-      if (bdPokes) {
-        limit -= bdPokes.length;
-        if (limit < 0) return bdPokes;
+    if (limit >= 0) {
+      limit -= bdPokes.length;
+      if (limit < 0) {
+        return bdPokes;
       }
       apiLimit = apiOffset + limit;
       url += `limit/${apiLimit}`;
@@ -57,8 +58,9 @@ export class PokemonService {
     const resp = await firstValueFrom(this.httpService.get(url).pipe());
     const apiPokes: Pokemon[] = resp.data.map((p) => transform(p));
     const offsetPokes = apiPokes.slice(apiOffset);
+    const all = [...bdPokes, ...offsetPokes];
 
-    return bdPokes ? [...bdPokes, ...offsetPokes] : offsetPokes;
+    return all;
   }
 
   async findOne(name: string): Promise<Pokemon> {
@@ -68,8 +70,9 @@ export class PokemonService {
     const url = URI + name;
     try {
       const apiPoke = await firstValueFrom(this.httpService.get(url).pipe());
-      return apiPoke.data.map((d) => transform(d));
+      return transform(apiPoke.data);
     } catch (err) {
+      console.log(err);
       return null;
     }
   }

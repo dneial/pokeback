@@ -5,7 +5,7 @@
 type Pokemon {
   id: ID!
   name: String!
-  imageURL: String!
+  imageURL: String
   hp: Float!
   attack: Float!
   defense: Float!
