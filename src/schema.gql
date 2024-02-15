@@ -12,6 +12,7 @@ type Pokemon {
   speed: Float!
   evolutions: [String!]
   preEvolution: String
+  userCreated: Boolean!
 }
 
 type Query {
@@ -22,7 +23,7 @@ type Query {
 type Mutation {
   createPokemon(createPokemonInput: CreatePokemonInput!): Pokemon!
   updatePokemon(updatePokemonInput: UpdatePokemonInput!): Pokemon!
-  removePokemon(id: String!): Pokemon!
+  removePokemon(id: String!): Boolean!
 }
 
 input CreatePokemonInput {

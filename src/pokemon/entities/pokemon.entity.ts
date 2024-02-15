@@ -40,4 +40,8 @@ export class Pokemon {
   @Column({ nullable: true })
   @Field(() => String, { nullable: true })
   preEvolution: string;
+
+  @Column({ default: true })
+  @Field(() => Boolean)
+  userCreated: boolean;
 }

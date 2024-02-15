@@ -38,7 +38,7 @@ export class PokemonResolver {
     );
   }
 
-  @Mutation(() => Pokemon)
+  @Mutation(() => Boolean)
   removePokemon(@Args('id', { type: () => String }) id: string) {
     return this.pokemonService.remove(id);
   }

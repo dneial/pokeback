@@ -20,6 +20,7 @@ const transform = (apiData): Pokemon => {
     speed: apiData.stats.speed,
     evolutions: apiData.apiEvolutions.map((p) => p.name),
     preEvolution: apiData.apiPreEvolution.name,
+    userCreated: false,
   };
 };
 
@@ -81,7 +82,7 @@ export class PokemonService {
     return this.pokemonRepository.update(id, { ...updatePokemonInput });
   }
 
-  remove(id: string) {
-    return this.pokemonRepository.delete(id);
+  async remove(id: string) {
+    return (await this.pokemonRepository.delete(id)).affected >= 1;
   }
 }
