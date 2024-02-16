@@ -22,7 +22,7 @@ type Query {
 
 type Mutation {
   createPokemon(createPokemonInput: CreatePokemonInput!): Pokemon!
-  updatePokemon(updatePokemonInput: UpdatePokemonInput!): Pokemon!
+  updatePokemon(updatePokemonInput: UpdatePokemonInput!): Boolean!
   removePokemon(id: String!): Boolean!
 }
 
@@ -38,12 +38,12 @@ input CreatePokemonInput {
 }
 
 input UpdatePokemonInput {
-  name: String!
+  name: String
   imageURL: String
-  hp: Int!
-  attack: Int!
-  defense: Int!
-  speed: Int!
+  hp: Int
+  attack: Int
+  defense: Int
+  speed: Int
   preEvolution: String
   evolutions: [String!]
   id: String!

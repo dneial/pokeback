@@ -28,14 +28,11 @@ export class PokemonResolver {
     return this.pokemonService.findOne(name);
   }
 
-  @Mutation(() => Pokemon)
+  @Mutation(() => Boolean)
   updatePokemon(
     @Args('updatePokemonInput') updatePokemonInput: UpdatePokemonInput,
   ) {
-    return this.pokemonService.update(
-      updatePokemonInput.id,
-      updatePokemonInput,
-    );
+    return this.pokemonService.update(updatePokemonInput);
   }
 
   @Mutation(() => Boolean)

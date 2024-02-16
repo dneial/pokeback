@@ -7,7 +7,7 @@ export class UpdatePokemonInput extends PartialType(CreatePokemonInput) {
   @Field(() => String)
   id: string;
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   name?: string;
 
   @IsOptional()
@@ -15,16 +15,16 @@ export class UpdatePokemonInput extends PartialType(CreatePokemonInput) {
   @Field(() => String, { nullable: true })
   imageURL: string;
 
-  @Field(() => Int)
+  @Field(() => Int, { nullable: true })
   hp?: number;
 
-  @Field(() => Int)
+  @Field(() => Int, { nullable: true })
   attack?: number;
 
-  @Field(() => Int)
+  @Field(() => Int, { nullable: true })
   defense?: number;
 
-  @Field(() => Int)
+  @Field(() => Int, { nullable: true })
   speed?: number;
 
   @IsOptional()

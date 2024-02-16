@@ -32,8 +32,10 @@ export class PokemonService {
     private readonly pokemonRepository: Repository<Pokemon>,
   ) {}
 
-  create(createPokemonInput: CreatePokemonInput) {
-    return this.pokemonRepository.save({ ...createPokemonInput });
+  async create(createPokemonInput: CreatePokemonInput) {
+    const poke = this.pokemonRepository.create({ ...createPokemonInput });
+    const inserted = await this.pokemonRepository.insert(poke);
+    if (inserted.identifiers) return poke;
   }
 
   async findAll(offset: number, limit: number): Promise<Pokemon[]> {
@@ -78,8 +80,12 @@ export class PokemonService {
     }
   }
 
-  update(id: string, updatePokemonInput: UpdatePokemonInput) {
-    return this.pokemonRepository.update(id, { ...updatePokemonInput });
+  async update(updatePokemonInput: UpdatePokemonInput) {
+    const update = await this.pokemonRepository.update(
+      { id: updatePokemonInput.id },
+      { ...updatePokemonInput },
+    );
+    return update.affected >= 1;
   }
 
   async remove(id: string) {
