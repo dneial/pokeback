@@ -6,8 +6,9 @@ import { Repository } from 'typeorm';
 import { CreatePokemonInput } from './dto/create-pokemon.input';
 import { UpdatePokemonInput } from './dto/update-pokemon.input';
 import { Pokemon } from './entities/pokemon.entity';
+import { PokemonType } from './entities/pokemontype.entity';
 
-const URI = 'https://pokebuildapi.fr/api/v1/pokemon/';
+const URI = 'https://pokebuildapi.fr/api/v1/';
 
 const transform = (apiData): Pokemon => {
   return {
@@ -18,6 +19,7 @@ const transform = (apiData): Pokemon => {
     attack: apiData.stats.attack,
     defense: apiData.stats.defense,
     speed: apiData.stats.speed,
+    types: apiData.apiTypes.map((t) => ({ id: t.id, name: t.name })),
     evolutions: apiData.apiEvolutions.map((p) => p.name),
     preEvolution: apiData.apiPreEvolution.name,
     userCreated: false,
@@ -30,24 +32,28 @@ export class PokemonService {
     private readonly httpService: HttpService,
     @InjectRepository(Pokemon)
     private readonly pokemonRepository: Repository<Pokemon>,
+    @InjectRepository(PokemonType)
+    private readonly typeRepository: Repository<PokemonType>,
   ) {}
 
   async create(createPokemonInput: CreatePokemonInput) {
-    const poke = this.pokemonRepository.create({ ...createPokemonInput });
-    const inserted = await this.pokemonRepository.insert(poke);
-    if (inserted.identifiers) return poke;
+    const poke = this.pokemonRepository.create(createPokemonInput);
+    return await this.pokemonRepository.save(poke);
   }
 
   async findAll(offset: number, limit: number): Promise<Pokemon[]> {
     const bdPokes: Pokemon[] = await this.pokemonRepository.find({
       skip: offset,
       take: limit,
+      relations: {
+        types: true,
+      },
     });
 
     offset |= 0;
     const apiOffset = offset - bdPokes.length < 0 ? 0 : offset - bdPokes.length;
 
-    let url = URI;
+    let url = URI + 'pokemon/';
     let apiLimit;
 
     if (limit >= 0) {
@@ -70,7 +76,7 @@ export class PokemonService {
     const bdPokemon = await this.pokemonRepository.findOneBy({ name });
     if (bdPokemon) return bdPokemon;
 
-    const url = URI + name;
+    const url = URI + 'pokemon/' + name;
     try {
       const apiPoke = await firstValueFrom(this.httpService.get(url).pipe());
       return transform(apiPoke.data);
@@ -80,12 +86,27 @@ export class PokemonService {
     }
   }
 
-  async update(updatePokemonInput: UpdatePokemonInput) {
-    const update = await this.pokemonRepository.update(
-      { id: updatePokemonInput.id },
-      { ...updatePokemonInput },
+  async findByType(type: string) {
+    const resp = await firstValueFrom(
+      this.httpService.get(URI + `pokemon/type/${type}`),
     );
-    return update.affected >= 1;
+    const apiPokes = resp.data.map((p) => transform(p));
+
+    return apiPokes;
+  }
+
+  async getTypes(): Promise<PokemonType[]> {
+    const types = await firstValueFrom(this.httpService.get(URI + 'types'));
+    return types.data.map((t) => ({ id: t.id, name: t.name }));
+  }
+
+  async update(updatePokemonInput: UpdatePokemonInput) {
+    // const update = await this.pokemonRepository.update(
+    // { id: updatePokemonInput.id },
+    // { ...updatePokemonInput },
+    // );
+    // return update.affected >= 1;
+    return false;
   }
 
   async remove(id: string) {

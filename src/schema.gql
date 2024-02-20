@@ -2,6 +2,11 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type PokemonType {
+  id: Int!
+  name: String!
+}
+
 type Pokemon {
   id: ID!
   name: String!
@@ -10,14 +15,22 @@ type Pokemon {
   attack: Float!
   defense: Float!
   speed: Float!
+  types: [PokemonType!]!
   evolutions: [String!]
   preEvolution: String
   userCreated: Boolean!
 }
 
+input TypeInput {
+  id: Int!
+  name: String!
+}
+
 type Query {
   pokemons(offset: Int, limit: Int): [Pokemon!]!
   pokemon(name: String!): Pokemon
+  getAllTypes: [PokemonType!]!
+  getByType(type: TypeInput!): [Pokemon!]!
 }
 
 type Mutation {
@@ -33,6 +46,7 @@ input CreatePokemonInput {
   attack: Int!
   defense: Int!
   speed: Int!
+  types: [TypeInput!]!
   preEvolution: String
   evolutions: [String!]
 }
@@ -44,6 +58,7 @@ input UpdatePokemonInput {
   attack: Int
   defense: Int
   speed: Int
+  types: [TypeInput!]
   preEvolution: String
   evolutions: [String!]
   id: String!

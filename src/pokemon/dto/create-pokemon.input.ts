@@ -1,5 +1,6 @@
 import { Field, InputType, Int } from '@nestjs/graphql';
 import { IsOptional, IsUrl } from 'class-validator';
+import { PokemonType } from '../entities/pokemontype.entity';
 
 @InputType()
 export class CreatePokemonInput {
@@ -22,6 +23,9 @@ export class CreatePokemonInput {
 
   @Field(() => Int)
   speed: number;
+
+  @Field(() => [PokemonType])
+  types: PokemonType[];
 
   @IsOptional()
   @Field(() => String, { nullable: true })

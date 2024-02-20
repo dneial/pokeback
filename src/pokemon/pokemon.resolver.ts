@@ -2,6 +2,7 @@ import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { CreatePokemonInput } from './dto/create-pokemon.input';
 import { UpdatePokemonInput } from './dto/update-pokemon.input';
 import { Pokemon } from './entities/pokemon.entity';
+import { PokemonType } from './entities/pokemontype.entity';
 import { PokemonService } from './pokemon.service';
 
 @Resolver(() => Pokemon)
@@ -38,5 +39,15 @@ export class PokemonResolver {
   @Mutation(() => Boolean)
   removePokemon(@Args('id', { type: () => String }) id: string) {
     return this.pokemonService.remove(id);
+  }
+
+  @Query(() => [PokemonType])
+  getAllTypes() {
+    return this.pokemonService.getTypes();
+  }
+
+  @Query(() => [Pokemon])
+  getByType(@Args('type', { type: () => PokemonType }) type: string) {
+    return this.pokemonService.findByType(type);
   }
 }

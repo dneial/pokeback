@@ -27,6 +27,10 @@ export class UpdatePokemonInput extends PartialType(CreatePokemonInput) {
   @Field(() => Int, { nullable: true })
   speed?: number;
 
+  // @IsOptional()
+  // @Field(() => [String], { nullable: true })
+  // types: string[];
+
   @IsOptional()
   @Field(() => String, { nullable: true })
   preEvolution: string;

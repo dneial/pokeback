@@ -4,6 +4,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'path';
 import { Pokemon } from './pokemon/entities/pokemon.entity';
+import { PokemonType } from './pokemon/entities/pokemontype.entity';
 import { PokemonModule } from './pokemon/pokemon.module';
 
 @Module({
@@ -19,7 +20,8 @@ import { PokemonModule } from './pokemon/pokemon.module';
       type: 'postgres',
       synchronize: true,
       logging: true,
-      entities: [Pokemon],
+      entities: [Pokemon, PokemonType],
+      migrations: ['./pokemon/migrations/**'],
       host: 'localhost',
       port: 5432,
       password: 'azerty',
