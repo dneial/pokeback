@@ -29,6 +29,11 @@ export class PokemonResolver {
     return this.pokemonService.findOne(name);
   }
 
+  @Query(() => [Pokemon])
+  findbyName(@Args('name', { type: () => String }) name: string) {
+    return this.pokemonService.findByName(name);
+  }
+
   @Mutation(() => Boolean)
   updatePokemon(
     @Args('updatePokemonInput') updatePokemonInput: UpdatePokemonInput,
@@ -47,7 +52,13 @@ export class PokemonResolver {
   }
 
   @Query(() => [Pokemon])
-  getByType(@Args('type', { type: () => PokemonType }) type: string) {
-    return this.pokemonService.findByType(type);
+  getByType(@Args('types', { type: () => [String] }) types: string[]) {
+    console.log(types);
+    return this.pokemonService.findByType(types);
+  }
+
+  @Mutation(() => Boolean)
+  clearPokemon() {
+    return this.pokemonService.clear();
   }
 }

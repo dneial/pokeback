@@ -29,14 +29,16 @@ input TypeInput {
 type Query {
   pokemons(offset: Int, limit: Int): [Pokemon!]!
   pokemon(name: String!): Pokemon
+  findbyName(name: String!): [Pokemon!]!
   getAllTypes: [PokemonType!]!
-  getByType(type: TypeInput!): [Pokemon!]!
+  getByType(types: [String!]!): [Pokemon!]!
 }
 
 type Mutation {
   createPokemon(createPokemonInput: CreatePokemonInput!): Pokemon!
   updatePokemon(updatePokemonInput: UpdatePokemonInput!): Boolean!
   removePokemon(id: String!): Boolean!
+  clearPokemon: Boolean!
 }
 
 input CreatePokemonInput {
@@ -46,7 +48,7 @@ input CreatePokemonInput {
   attack: Int!
   defense: Int!
   speed: Int!
-  types: [TypeInput!]!
+  types: [Int!]!
   preEvolution: String
   evolutions: [String!]
 }
@@ -58,7 +60,7 @@ input UpdatePokemonInput {
   attack: Int
   defense: Int
   speed: Int
-  types: [TypeInput!]
+  types: [Int!]
   preEvolution: String
   evolutions: [String!]
   id: String!

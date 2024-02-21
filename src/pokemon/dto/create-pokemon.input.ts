@@ -24,7 +24,7 @@ export class CreatePokemonInput {
   @Field(() => Int)
   speed: number;
 
-  @Field(() => [PokemonType])
+  @Field(() => [Int])
   types: PokemonType[];
 
   @IsOptional()

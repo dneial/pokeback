@@ -1,5 +1,6 @@
 import { Field, InputType, Int, PartialType } from '@nestjs/graphql';
 import { IsOptional, IsUrl } from 'class-validator';
+import { PokemonType } from '../entities/pokemontype.entity';
 import { CreatePokemonInput } from './create-pokemon.input';
 
 @InputType()
@@ -27,9 +28,9 @@ export class UpdatePokemonInput extends PartialType(CreatePokemonInput) {
   @Field(() => Int, { nullable: true })
   speed?: number;
 
-  // @IsOptional()
-  // @Field(() => [String], { nullable: true })
-  // types: string[];
+  @IsOptional()
+  @Field(() => [Int], { nullable: true })
+  types: PokemonType[];
 
   @IsOptional()
   @Field(() => String, { nullable: true })
